@@ -25,3 +25,29 @@ int main()
 	cout << arr;
 	insert(arr, 7);
 	printArr(arr, 7);
+
+//////////////////////////////////
+
+
+#include "AEROFLOT.h"
+#include <iostream>
+#include <fstream>
+#include <ios>
+#include "Myarr.h"
+#include "Sort.h"
+using namespace std;
+const int n = 7;
+void printArr(T* a, int n) {
+	for (int i = 0; i < n; i++)
+		cout << a[i] << " "; 
+}
+int main()
+{
+	Myarr<AEROFLOT> arr;
+	ifstream in("text1.txt");
+	if (!in)cout << "\n file not open \n";
+	in >> arr;
+	cout << arr;
+	insert(arr, 7);
+	printArr(arr, 7);
+}
