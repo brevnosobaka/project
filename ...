@@ -1,0 +1,186 @@
+///////////class AEROFLOT///////
+#include "AEROFLOT.h"
+#include <iostream>
+#include <fstream>
+#include <ios>
+#include "Myarr.h"
+#include "Sort.h"
+#include "sortcomp.h"
+using namespace std;
+const int n = 7;
+template <class T>
+void printArr(T* a, int n) {
+	for (int i = 0; i < n; i++)
+		std::cout << a[i] << " ";
+}
+int main()
+{
+	Myarr<AEROFLOT> arr;
+	ifstream in("text1.txt");
+	if (!in)cout << "\n file not open \n";
+	in >> arr;
+	cout << arr;
+	insert(arr, 7);
+	printArr(arr, 7);
+}
+
+///////////////sortcomp.h///////////
+#pragma once
+template <class T>
+void boobleSort(T* a, int n, bool (*comp)(T&, T&)) {
+    int flag = 1;
+    T t;
+    while (flag) {
+        flag = 0;
+        for (int i = 0; i < n - 1; i++) {
+            if (comp(a[i + 1], a[i])) {
+                t = a[i]; a[i] = a[i + 1]; a[i + 1] = t;
+                flag = 1;
+            }
+        }
+    }
+}
+template <class T>
+void shell(T* a, int n, bool (*comp)(T&, T&)) {
+    int steps[5] = { 121,40,13,4,1 };
+    int j;
+    T t;
+    for (int k = 0; k < 5; k++) {
+        int step = steps[k];
+        for (int i = step; i < n; i++) {
+            t = a[i];
+            for (j = i - step; j >= 0 && comp(t, a[j]); j -= step)a[j + step] = a[j];
+            a[j + step] = t;
+        }
+    }
+
+}
+template <class T>
+void qs(T* a, int left, int right, bool (*comp)(T&, T&)) {
+    int i = left;
+    int j = right;
+    T x = a[(left + right) / 2];
+    T t;
+    do {
+        while (i < right && comp(a[i], x))i++;
+        while (j > left && comp(x, a[j]))j--;
+        if (i <= j) {
+            t = a[i]; a[i] = a[j]; a[j] = t;
+            i++; j--;
+        }
+
+    } while (i <= j);
+    if (j > left)qs(a, left, j, comp);
+    if (i < right)qs(a, i, right, comp);
+}
+
+/////////////AEROFLOT.h/////////////////
+#pragma once
+#include <iostream>
+#include <fstream>
+#include <ios>
+using namespace std;
+
+#include <string.h>
+
+//const int a = 7; //// Константа для размера массива (не используется в классе)
+class AEROFLOT // Класс для хранения данных о рейсах
+{
+    public: //публичный доступ
+    char destination[20]=""; // Пункт назначения (строка до 20 символов)   
+    int flight_number=0;// Номер рейса (целое число)
+    char paircraft_type[10]="";// Тип самолета (строка до 10 символов)
+    // Конструкторы:
+    AEROFLOT(){};// Конструктор по умолчанию
+
+    AEROFLOT(const char* n, int f, const char* p);// Конструктор с параметрами
+
+    AEROFLOT(AEROFLOT& m);// Конструктор копирования
+
+    friend ostream& operator<<(ostream& os, const AEROFLOT& m)// Перегрузка операторов для ввода/вывода:    
+        {
+        os<<m.destination<<" "<<m.flight_number<<" "<<m.paircraft_type<<" ";
+        return os;
+        } 
+    
+    friend istream& operator>>(istream& is, AEROFLOT& m)
+        {
+        is >> m.destination >> m.flight_number >> m.paircraft_type;
+        return is;
+        }
+   
+    bool operator<(const AEROFLOT& m)
+    {
+        return strcmp(destination, m.destination);
+    }
+
+    bool operator>(const AEROFLOT& m)
+    {
+        return strcmp(destination, m.destination);
+    }
+};
+
+
+//////////////////////sort/h/////////////////////
+#pragma once
+template <class T>
+template <class T>
+void select(T* a, int n) {
+    int j, c;
+    T t;
+    for (int i = 0; i < n - 1; i++) {
+        t = a[i]; c = i;
+        for (j = i + 1; j < n; j++)
+            if (a[j] < t) {
+                t = a[j];
+                c = j;
+            }
+        a[c] = a[i];
+        a[i] = t;
+    }
+}
+
+
+template <class T>
+void insert(T* a, int n) {
+    int j;
+    T t;
+    for (int i = 1; i < n; i++) {
+        t = a[i];
+        for (j = i - 1; j >= 0 && t < a[j]; j--)a[j + 1] = a[j];
+        a[j + 1] = t;
+    }
+}
+
+
+
+////////////////////////////text1/txt//////////////////
+7
+London	101	Boeing
+Paris	202	Airbus 
+NY		303 Boeing
+Berlin	404	Embraer
+Tokyo	505	Boeing
+Moscow	606	Airbus
+Dubai	707	Boeing
+
+//////////////////////AEROFLOT.cpp/////////////////////
+#include "AEROFLOT.h"
+AEROFLOT::AEROFLOT() : flight_number(0) {
+    strcpy_s(destination, "");
+    strcpy_s(paircraft_type, "");
+}
+
+AEROFLOT::AEROFLOT(const char* n, int f, const char* p)
+{
+    strcpy_s(destination, n);
+    strcpy_s(paircraft_type, p);
+    flight_number = f;
+}
+
+AEROFLOT::AEROFLOT(AEROFLOT& m) {
+    strcpy_s(destination, m.destination);
+    strcpy_s(paircraft_type, m.paircraft_type);
+    flight_number = m.flight_number;
+}
+
